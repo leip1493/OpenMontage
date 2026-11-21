@@ -39,6 +39,8 @@ pedido es vago: `skills/meta/onboarding.md`. Si el usuario pasa un video de refe
 7. **No edites `AGENTS.md` ni `CLAUDE.md` de upstream**: las reglas locales van acá.
 8. **Si el pedido implica cambiar el comportamiento del pipeline**, no toques `skills/` ni
    `pipeline_defs/` en `main`: proponé `local/<tema>`, o un PR a upstream desde el fork.
+9. **No commitees ni hagas push sin autorización explícita del usuario.** Proponé el mensaje
+   y esperá el OK, incluso en `local/config`. Sin líneas `Co-Authored-By` ni atribución a IA.
 
 ## Ritual de actualización — antes de tocar código
 
