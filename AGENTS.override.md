@@ -7,8 +7,9 @@ Este checkout es un clon de **terceros**. No es código nuestro.
 
 Este archivo **reemplaza** al `AGENTS.md` versionado de este directorio (convención
 `AGENTS.override.md`: en Hermes y Codex gana sobre `AGENTS.md` en el mismo directorio).
-No está en git: vive en `.git/info/exclude`. Por eso repite abajo el contrato de upstream,
-que ya no se carga solo.
+Está versionado **solo en la rama `local/config`**, no en `main`: por eso, mientras trabajás
+acá, la rama activa debe ser `local/config` (ahí este archivo existe y se carga). Repite
+abajo el contrato de upstream, porque en este directorio reemplaza al suyo.
 
 Si trabajás desde una subcarpeta, este archivo se sigue cargando (Hermes arma la cadena
 `AGENTS.md` desde la raíz git hasta el cwd).
@@ -27,8 +28,9 @@ pedido es vago: `skills/meta/onboarding.md`. Si el usuario pasa un video de refe
    cambio ahí se pierde en el próximo update o lo rompe.
 2. **Nunca commitees en `main`.** `main` es espejo de `upstream/main` y debe poder
    actualizarse con `--ff-only` en cualquier momento.
-3. **Tus cambios van en ramas `local/*`**, siempre creadas desde `upstream/main`:
-   `local/config` (provider, modelo, budget, paths) y `local/<tema>` para parches.
+3. **Tus cambios van en `local/config` o en ramas `local/*` creadas desde ella** (así
+   heredan este archivo): `local/config` lleva los ajustes de provider/modelo/budget/paths y
+   este override; `local/<tema>` para parches puntuales.
 4. **Nunca hagas push a `upstream`.** Tenés que pushear a `origin` (el fork).
 5. **No abras PR desde `local/config`.** Es configuración personal; un PR mandaría el
    provider y el presupuesto propios al proyecto de ellos.
@@ -40,26 +42,25 @@ pedido es vago: `skills/meta/onboarding.md`. Si el usuario pasa un video de refe
 
 ## Ritual de actualización — antes de tocar código
 
+Se hace **sin cambiar de rama**: te quedás en `local/config` y rebaseás sobre upstream. Así
+este archivo nunca desaparece (existe solo en `local/config`).
+
 ```bash
 cd ~/repositorios/OpenMontage
 git status --short                  # DEBE estar vacío
+git branch --show-current           # DEBE decir local/config
 git fetch upstream
-git switch main
-git merge --ff-only upstream/main
-git switch local/config
 git rebase upstream/main
 ```
 
-- Si `git status --short` no está vacío, **pará y avisá**: un archivo versionado modificado
-  rompe el `--ff-only`. Los patrones que sí son locales (`.tmp/`, `.tmp-reference/`) ya están
-  en `.git/info/exclude`.
+- Si `git status --short` no está vacío, **pará y avisá**: hay cambios sin commitear.
 - Si el rebase choca en `config.yaml`, se resuelve a mano conservando el provider local.
   Nunca `git checkout --theirs` a ciegas.
-- Espejar el fork en GitHub (opcional, cuando quieras que se vea):
-  `git push origin main local/config`.
+- Espejar en GitHub (opcional): `git push origin local/config`. Para mantener el espejo de
+  `main` al día también: `git push origin upstream/main:main`.
 
-Rama equivocada = update fallido. Verificá siempre con `git branch -vv`:
-`main` debe mostrar `[upstream/main]` y `local/config` `[origin/local/config]`.
+Verificá siempre con `git branch -vv`: `main` debe mostrar `[upstream/main]` y
+`local/config` `[origin/local/config]`. Rama equivocada = update fallido.
 
 ## Version fijada
 
